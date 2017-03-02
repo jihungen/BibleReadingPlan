@@ -10,6 +10,9 @@ book_pattern = re.compile(BOOK_PATTERN_STR)
 bible_range_pattern = re.compile(BIBLE_RANGE_PATTERN_STR)
 
 class BibleDescription(object):
+    book = None
+    from_chapter = to_chapter = from_verse = to_verse = 0
+
     def __init__(self, bible_desc):
         found_str = bible_desc_pattern.findall(bible_desc)
         if not found_str or len(found_str[0]) <= 0:
@@ -30,6 +33,7 @@ class BibleDescription(object):
     def parse_range(bible_range):
         from_chapter = from_verse = to_chapter = to_verse = None
         range_count = bible_range.count(':')
+
         if range_count == 2:
             ranges = bible_range.split('-')
             if ranges and len(ranges) == 2:
@@ -47,7 +51,7 @@ class BibleDescription(object):
                 from_verse = verse_range
                 to_verse = verse_range
 
-        return from_chapter, from_verse, to_chapter, to_verse
+        return int(from_chapter), int(from_verse), int(to_chapter), int(to_verse)
 
     @staticmethod
     def parse_single_range(bible_range):
