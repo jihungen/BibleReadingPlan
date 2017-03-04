@@ -1,83 +1,6 @@
 import sqlite3
 from bible import BibleDescription
-
-class DBBook(object):
-    '''Transform book fullname to the table (book) in DB'''
-    book_fullname_to_db = {
-    	'GENESIS': 'Genesis',
-    	'EXODUS': 'Exodus',
-    	'LEVITICUS': 'Leviticus',
-    	'NUMBERS': 'Numbers',
-    	'DEUTERONOMY': 'Deuteronomy',
-    	'JOSHUA': 'Joshua',
-    	'JUDGES': 'Judges',
-    	'RUTH': 'Ruth',
-    	'1 SAMUEL': 'FirstSamuel',
-    	'2 SAMUEL': 'SecondSamuel',
-    	'1 KINGS': 'FirstKings',
-    	'2 KINGS': 'SecondKings',
-    	'1 CHRONICLES': 'FirstChronicles',
-    	'2 CHRONICLES': 'SecondChronicles',
-    	'EZRA': 'Ezra',
-    	'NEHEMIAH': 'Nehemiah',
-    	'ESTHER': 'Esther',
-    	'JOB': 'Job',
-    	'PSALM': 'Psalms',
-    	'PROVERBS': 'Proverbs',
-    	'ECCLESIASTES': 'Ecclesiastes',
-    	'SONG': 'SongOfSongs',
-    	'ISAIAH': 'Isaiah',
-    	'JEREMIAH': 'Jeremiah',
-    	'LAMENTATIONS': 'Lamentations',
-    	'EZEKIEL': 'Ezekiel',
-    	'DANIEL': 'Daniel',
-    	'HOSEA': 'Hosea',
-    	'JOEL': 'Joel',
-    	'AMOS': 'Amos',
-    	'OBADIAH': 'Obadiah',
-    	'JONAH': 'Jonah',
-    	'MICAH': 'Micah',
-    	'NAHUM': 'Nahum',
-    	'HABAKKUK': 'Habakkuk',
-    	'ZEPHANIAH': 'Zephaniah',
-    	'HAGGAI': 'Haggai',
-    	'ZECHARIAH': 'Zechariah',
-    	'MALACHI': 'Malachi',
-    	'MATTHEW': 'Matthew',
-    	'MARK': 'Mark',
-    	'LUKE': 'Luke',
-    	'JOHN': 'John',
-    	'ACTS': 'Acts',
-    	'ROMANS': 'Romans',
-    	'1 CORINTHIANS': 'FirstCorinthians',
-    	'2 CORINTHIANS': 'SecondCorinthians',
-    	'GALATIANS': 'Galatians',
-    	'EPHESIANS': 'Ephesians',
-    	'PHILIPPIANS': 'Philippians',
-    	'COLOSSIANS': 'Colossians',
-    	'1 THESSALONIANS': 'FirstThessalonians',
-    	'2 THESSALONIANS': 'SecondThessalonians',
-    	'1 TIMOTHY': 'FirstTimothy',
-    	'2 TIMOTHY': 'SecondTimothy',
-    	'TITUS': 'Titus',
-    	'PHILEMON': 'Philemon',
-    	'HEBREWS': 'Hebrews',
-    	'JAMES': 'James',
-    	'1 PETER': 'FirstPeter',
-    	'2 PETER': 'SecondPeter',
-    	'1 JOHN': 'FirstJohn',
-    	'2 JOHN': 'SecondJohn',
-    	'3 JOHN': 'ThirdJohn',
-    	'JUDE': 'Jude',
-    	'REVELATION': 'Revelation'
-    }
-
-    @classmethod
-    def get_db_book(cls, book_fullname):
-        if book_fullname not in cls.book_fullname_to_db.keys():
-            return None
-
-        return cls.book_fullname_to_db[book_fullname]
+from book import Book
 
 class Execution(object):
     '''Execute the query with given bible information'''
@@ -91,7 +14,7 @@ class Execution(object):
         self.cursor = self.conn.cursor()
 
     def get_text(self, bible):
-        db_book = DBBook.get_db_book(bible.book)
+        db_book = Book.get_db_book(bible.book)
         if db_book is None:
             return {}
 

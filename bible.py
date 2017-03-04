@@ -1,33 +1,99 @@
 # -*- coding: utf-8 -*-
 import re
+from book import Book
 
-BOOK_PATTERN_STR = '[0-9]?[ ]?[A-Z]+'
-BIBLE_RANGE_PATTERN_STR = '[0-9]+\:[0-9|\-|\:]*[0-9]+'
-BIBLE_DESC_PATTERN_STR = BOOK_PATTERN_STR + ' ' + BIBLE_RANGE_PATTERN_STR
+class Date(object):
+    MONTH_PATTERN_STR = '[A-Z][a-z]+'
+    DAY_PATTERN_STR = '[0-9]+'
+    DATE_PATTERN_STR = MONTH_PATTERN_STR + ' ' + DAY_PATTERN_STR
 
-bible_desc_pattern = re.compile(BIBLE_DESC_PATTERN_STR)
-book_pattern = re.compile(BOOK_PATTERN_STR)
-bible_range_pattern = re.compile(BIBLE_RANGE_PATTERN_STR)
+    date_pattern = re.compile(DATE_PATTERN_STR)
+    month_pattern = re.compile(MONTH_PATTERN_STR)
+    day_pattern = re.compile(DAY_PATTERN_STR)
 
-class BibleDescription(object):
-    book = None
-    from_chapter = to_chapter = from_verse = to_verse = 0
+    month_to_numeber = {
+        'June': 6,
+        'July': 7,
+        'August': 8,
+        'September': 9,
+        'October': 10,
+        'November': 11,
+        'December': 12,
+        'January': 1,
+        'February': 2,
+        'March': 3,
+        'April': 4,
+        'May': 5
+    }
+
+    @classmethod
+    def get_month_number(cls, month):
+        if month not in cls.month_to_numeber.keys():
+            return -1
+
+        return cls.month_to_numeber[month]
+
+    @classmethod
+    def extract_date(cls, str):
+        date_str = cls.date_pattern.findall(str)
+        if not date_str:
+            return None, None
+
+        month = cls.month_pattern.findall(date_str[0])[0]
+        day = cls.day_pattern.findall(date_str[0])[0]
+        return month, int(day)
+
+class BibleDay:
+    def __init__(self, month, day):
+        self.month = Date.get_month_number(month)
+        self.day = day
+        self.bible_desc_list = []
+
+    def add_bible_desc(self, bible_desc):
+        self.bible_desc_list.append(bible_desc)
+
+    def get_date_str(self):
+        return str(self.month) + u'월 ' + str(self.day) + u'일'
+
+    def get_filename(self, year):
+        return 'bible_' + str(year) + '%02d' % self.month + '%02d' % self.day + '.html'
+
+class BibleDescription:
+    BOOK_PATTERN_STR = '[0-9]?[ ]?[A-Z]+'
+    BIBLE_RANGE_PATTERN_STR = '[0-9]+\:[0-9|\-|\:]*[0-9]+'
+    BIBLE_DESC_PATTERN_STR = BOOK_PATTERN_STR + ' ' + BIBLE_RANGE_PATTERN_STR
+
+    bible_desc_pattern = re.compile(BIBLE_DESC_PATTERN_STR)
+    book_pattern = re.compile(BOOK_PATTERN_STR)
+    bible_range_pattern = re.compile(BIBLE_RANGE_PATTERN_STR)
 
     def __init__(self, bible_desc):
-        found_str = bible_desc_pattern.findall(bible_desc)
+        found_str = BibleDescription.bible_desc_pattern.findall(bible_desc)
         if not found_str or len(found_str[0]) <= 0:
+            self.book = None
             return
 
-        self.book = book_pattern.findall(found_str[0])[0]
-        bible_range = bible_range_pattern.findall(found_str[0])[0]
+        self.book = BibleDescription.book_pattern.findall(found_str[0])[0]
+        bible_range = BibleDescription.bible_range_pattern.findall(found_str[0])[0]
         self.from_chapter, self.from_verse, self.to_chapter, self.to_verse = BibleDescription.parse_range(bible_range)
+        self.text_list = []
 
-    def add_text(self, text):
-        self.text
+    def is_empty(self):
+        return self.book == None
 
-    def print_info(self):
-        print self.book + ' ' + self.from_chapter + ':' + self.from_verse + ' to ' + self.to_chapter + ':' + self.to_verse
-        print str(self.text)
+    def has_multiple_chapters(self):
+        return self.from_chapter != self.to_chapter
+
+    def add_text_list(self, text_list):
+        self.text_list.extend(text_list)
+
+    def get_info(self):
+        content = Book.get_korean_book(self.book) + ' ' + str(self.from_chapter) + ':' + str(self.from_verse)
+        if self.has_multiple_chapters():
+            content += '-' + str(self.to_chapter) + ':' + str(self.to_verse)
+        else:
+            content += '-' + str(self.to_verse)
+        return content
 
     @staticmethod
     def parse_range(bible_range):
