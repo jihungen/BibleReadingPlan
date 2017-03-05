@@ -39,6 +39,11 @@ class HTMLForm(object):
         return u'<h3>' + bible_chapter_info + u'</h3>\n'
 
     @classmethod
+    def generateHTMLBibleVerseHead(cls, bible_verse_head):
+        print u'bible_verse_head: ' + bible_verse_head
+        return u'<h4>' + bible_verse_head + u'</h4>\n'
+
+    @classmethod
     def generateHTMLBibleText(cls, bible_text):
         # print u'bible_text: ' + bible_text
         return u'<p>' + bible_text + u'<p>\n'
@@ -57,16 +62,16 @@ class HTMLForm(object):
                 chapter = curr_text[Execution.INDEX_CHAPTER]
                 verse = curr_text[Execution.INDEX_VERSE]
                 bible_text = curr_text[Execution.INDEX_TEXT]
+                is_second_part_verse = True if int(curr_text[Execution.INDEX_DIVIDED_VERSE]) > 1 else False
 
                 if bible_desc.has_multiple_chapters() and chapter != last_chapter:
                     content += HTMLForm.generateHTMLBibleChapterHead(Book.get_korean_book(bible_desc.book) + u' ' + str(chapter) + u'장')
                     last_chapter = chapter
 
-                show_text = bible_text
                 if curr_text[Execution.INDEX_TYPE] == 1:
-                    show_text = str(verse) + '. ' + show_text
-
-                content += HTMLForm.generateHTMLBibleText(show_text)
+                    content += HTMLForm.generateHTMLBibleText(bible_text if is_second_part_verse else str(verse) + '. ' + bible_text)
+                else:
+                    content += HTMLForm.generateHTMLBibleVerseHead(bible_text)
 
         content += HTMLForm.POST_BODY
         return content

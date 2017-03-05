@@ -6,6 +6,7 @@ class Execution(object):
     '''Execute the query with given bible information'''
     INDEX_CHAPTER = 1
     INDEX_VERSE = 2
+    INDEX_DIVIDED_VERSE = 3
     INDEX_TYPE = 4
     INDEX_TEXT = 5
 
