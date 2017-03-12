@@ -1,0 +1,53 @@
+{
+    "filename" : "oyb_chronogical_order",
+    "title" : "One Year Bible in Chronogical Order",
+    "authors" : [
+        {
+          "name" : "Christian",
+          "sort" : "Christian"
+        }
+    ],
+    "cover" : "images/cover.jpg",
+    "rights" : "Nothing to declare",
+    "publisher" : "Christian",
+    "language" : "kr",
+    "subjects" : [ "Christinity" ],
+    "contributors" : [
+        {
+            "name" : "Christian",
+            "role" : "E-book making"
+        }
+    ],
+    "identifier" : {
+        "scheme" : "URL",
+        "value" : "http://oneyearbibleonline.com/daily-oyb/"
+    },
+    "contents" : [
+        {
+            "type" : "title-page",
+            "source" : "title.html"
+        },
+        {
+            "type" : "toc",
+            "source" : "toc.html"
+        },
+        {
+            "type" : "text",
+            "source" : "bible_*.html"
+        }
+    ],
+    "toc" : {
+        "depth" : 1,
+        "parse" : [ "text" ],
+        "generate" : {
+            "title" : "One Year Bible in Chronogical Order"
+        }
+    },
+    "guide" : [
+        {
+            "type" : "toc",
+            "title" : "One Year Bible in Chronogical Order",
+            "href" : "toc.html"
+        }
+    ]
+}

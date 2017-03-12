@@ -44,8 +44,9 @@ class Date(object):
         return month, int(day)
 
 class BibleDay:
-    def __init__(self, month, day):
-        self.month = Date.get_month_number(month)
+    def __init__(self, year, month, day):
+        self.year = year
+        self.month = month
         self.day = day
         self.bible_desc_list = []
 
@@ -53,10 +54,10 @@ class BibleDay:
         self.bible_desc_list.append(bible_desc)
 
     def get_date_str(self):
-        return str(self.month) + u'월 ' + str(self.day) + u'일'
+        return str(self.year) + u'년 ' + str(self.month) + u'월 ' + str(self.day) + u'일'
 
-    def get_filename(self, year):
-        return 'bible_' + str(year) + '%02d' % self.month + '%02d' % self.day + '.html'
+    def get_filename(self):
+        return 'bible_' + str(self.year) + '%02d' % self.month + '%02d' % self.day + '.html'
 
 class BibleDescription:
     BOOK_PATTERN_STR = '[0-9]?[ ]?[A-Z]+'
@@ -91,7 +92,7 @@ class BibleDescription:
         content = Book.get_korean_book(self.book) + ' ' + str(self.from_chapter) + ':' + str(self.from_verse)
         if self.has_multiple_chapters():
             content += '-' + str(self.to_chapter) + ':' + str(self.to_verse)
-        else:
+        elif self.from_verse != self.to_verse:
             content += '-' + str(self.to_verse)
         return content
 
