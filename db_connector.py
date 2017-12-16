@@ -33,8 +33,8 @@ class Execution(object):
             verse = curr[Execution.INDEX_VERSE]
             text = curr[Execution.INDEX_TEXT]
 
-            if chapter == bible.from_chapter and verse < bible.from_verse or \
-                chapter == bible.to_chapter and verse > bible.to_verse:
+            if chapter == bible.from_chapter and (bible.from_verse > 0 and verse < bible.from_verse) or \
+                chapter == bible.to_chapter and (bible.to_verse > 0 and verse > bible.to_verse):
                 continue
 
             results.append(curr)

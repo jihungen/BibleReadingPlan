@@ -20,27 +20,27 @@ class HTMLForm(object):
 
     @classmethod
     def generateHTMLHead(cls, title):
-        print u'title: ' + title
+        # print u'title: ' + title
         return cls.PRE_HEAD + title + cls.POST_HEAD
 
     @classmethod
     def generateHTMLDateHead(cls, date_str):
-        print u'date_str: ' + date_str
+        # print u'date_str: ' + date_str
         return u'<h1>' + date_str + u'</h1>\n'
 
     @classmethod
     def generateHTMLBibleHead(cls, bible_info):
-        print u'bible_info: ' + bible_info
+        # print u'bible_info: ' + bible_info
         return u'<h2>' + bible_info + u'</h2>\n'
 
     @classmethod
     def generateHTMLBibleChapterHead(cls, bible_chapter_info):
-        print u'bible_chapter_info: ' + bible_chapter_info
+        # print u'bible_chapter_info: ' + bible_chapter_info
         return u'<h3>' + bible_chapter_info + u'</h3>\n'
 
     @classmethod
     def generateHTMLBibleVerseHead(cls, bible_verse_head):
-        print u'bible_verse_head: ' + bible_verse_head
+        # print u'bible_verse_head: ' + bible_verse_head
         return u'<h4>' + bible_verse_head + u'</h4>\n'
 
     @classmethod

@@ -62,21 +62,36 @@ class BibleDay:
 class BibleDescription:
     BOOK_PATTERN_STR = '[0-9]?[ ]?[A-Z]+'
     BIBLE_RANGE_PATTERN_STR = '[0-9]+\:[0-9|\-|\:]*[0-9]+'
+    BIBLE_CHAPTER_ONLY_PATTERN_STR = '[0-9]+[\-]*[0-9]*'
+    
     BIBLE_DESC_PATTERN_STR = BOOK_PATTERN_STR + ' ' + BIBLE_RANGE_PATTERN_STR
+    BIBLE_DESC_CHAPTER_ONLY_PATTERN_STR = BOOK_PATTERN_STR + ' ' + BIBLE_CHAPTER_ONLY_PATTERN_STR
 
     bible_desc_pattern = re.compile(BIBLE_DESC_PATTERN_STR)
+    bible_desc_chapter_only_pattern = re.compile(BIBLE_DESC_CHAPTER_ONLY_PATTERN_STR)
+    
     book_pattern = re.compile(BOOK_PATTERN_STR)
     bible_range_pattern = re.compile(BIBLE_RANGE_PATTERN_STR)
+    bible_chapter_only_pattern = re.compile(BIBLE_CHAPTER_ONLY_PATTERN_STR)
 
     def __init__(self, bible_desc):
         found_str = BibleDescription.bible_desc_pattern.findall(bible_desc)
         if not found_str or len(found_str[0]) <= 0:
-            self.book = None
-            return
-
-        self.book = BibleDescription.book_pattern.findall(found_str[0])[0]
-        bible_range = BibleDescription.bible_range_pattern.findall(found_str[0])[0]
-        self.from_chapter, self.from_verse, self.to_chapter, self.to_verse = BibleDescription.parse_range(bible_range)
+            found_str = BibleDescription.bible_desc_chapter_only_pattern.findall(bible_desc)
+            
+            if not found_str or len(found_str[0]) <= 0:
+                self.book = None
+                return
+            
+            self.book = BibleDescription.book_pattern.findall(found_str[0])[0]
+            bible_range = BibleDescription.bible_chapter_only_pattern.findall(found_str[0])[0]
+            self.from_chapter, self.from_verse, self.to_chapter, self.to_verse = BibleDescription.parse_chapter_only_range(bible_range)
+            
+        else:
+            self.book = BibleDescription.book_pattern.findall(found_str[0])[0]
+            bible_range = BibleDescription.bible_range_pattern.findall(found_str[0])[0]
+            self.from_chapter, self.from_verse, self.to_chapter, self.to_verse = BibleDescription.parse_range(bible_range)
+            
         self.text_list = []
 
     def is_empty(self):
@@ -89,24 +104,31 @@ class BibleDescription:
         self.text_list.extend(text_list)
 
     def get_info(self):
-        content = Book.get_korean_book(self.book) + ' ' + str(self.from_chapter) + ':' + str(self.from_verse)
+        content = Book.get_korean_book(self.book) + ' ' + str(self.from_chapter)
+        if self.from_verse > 0:
+            content += ':' + str(self.from_verse)
+        
         if self.has_multiple_chapters():
-            content += '-' + str(self.to_chapter) + ':' + str(self.to_verse)
-        elif self.from_verse != self.to_verse:
+            content += '-' + str(self.to_chapter)
+            if self.to_verse > 0:
+                content += ':' + str(self.to_verse)
+            
+        elif self.from_verse > 0 and self.from_verse != self.to_verse:
             content += '-' + str(self.to_verse)
+            
         return content
 
     @staticmethod
     def parse_range(bible_range):
         from_chapter = from_verse = to_chapter = to_verse = None
-        range_count = bible_range.count(':')
+        chapter_verse_count = bible_range.count(':')
 
-        if range_count == 2:
+        if chapter_verse_count == 2:
             ranges = bible_range.split('-')
             if ranges and len(ranges) == 2:
                 from_chapter, from_verse = BibleDescription.parse_single_range(ranges[0])
                 to_chapter, to_verse = BibleDescription.parse_single_range(ranges[1])
-        elif range_count == 1:
+        elif chapter_verse_count == 1:
             from_chapter, verse_range = BibleDescription.parse_single_range(bible_range)
             to_chapter = from_chapter
 
@@ -118,6 +140,21 @@ class BibleDescription:
                 from_verse = verse_range
                 to_verse = verse_range
 
+        return int(from_chapter), int(from_verse), int(to_chapter), int(to_verse)
+        
+    @staticmethod
+    def parse_chapter_only_range(bible_range):
+        from_chapter = to_chapter = None
+        from_verse = to_verse = -1
+        
+        range_count = bible_range.count('-')
+        if range_count == 1:
+            ranges = bible_range.split('-')
+            from_chapter = ranges[0]
+            to_chapter = ranges[1]
+        else:
+            from_chapter = to_chapter = bible_range
+            
         return int(from_chapter), int(from_verse), int(to_chapter), int(to_verse)
 
     @staticmethod
